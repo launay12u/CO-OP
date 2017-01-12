@@ -1,6 +1,6 @@
 var app = angular.module('coop', ['ngResource']);
 
-app.const('api',{'key' : '0e03c5b3171e406c9c155ee8acd57992', 'url' : 'http://coop.api.netlor.fr/api'});
+app.constant('api',{'key' : '0e03c5b3171e406c9c155ee8acd57992', 'url' : 'http://coop.api.netlor.fr/api'});
 
 app.config(['$httpProvider', 'api', function($httpProvider, api){
   $httpProvider.defaults.headers.common.Authorization = "Token token="+api.key;
