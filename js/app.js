@@ -29,7 +29,7 @@ app.config(['$routeProvider',
 
     // register listener to watch route changes
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
-        if(next.$route.templateUrl == 'templates/home.html' || next.$route.templateUrl == 'templates/login.html' || next.$route.templateUrl == 'templates/inscrition.html'){
+        if(next.templateUrl == 'templates/home.html' || next.templateUrl == 'templates/login.html' || next.templateUrl == 'templates/inscrition.html'){
             if (localStorage.getItem('token') != null){
                 $location.path("/homeCo")
             }
