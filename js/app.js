@@ -84,6 +84,10 @@ app.controller("homeController", ['$scope', function ($scope) {
 
 }]);
 
+app.controller("homeCoController", ['$scope', function ($scope) {
+
+}]);
+
 app.controller("signupController", ['$scope','Member','TokenService', function ($scope,Member,TokenService) {
 
 }]);
