@@ -2,7 +2,6 @@ var app = angular.module('coop', ['ngResource','ngRoute']);
 
 app.config(['$routeProvider',
     function($routeProvider) {
-
         // Système de routage
         $routeProvider
             .when('/home', {
@@ -14,14 +13,34 @@ app.config(['$routeProvider',
                 controller: 'startController'
             })
             .when('/signup',{
-                templateUrl: 'templates/login.html',
+                templateUrl: 'templates/inscription.html',
                 controller: 'signupController'
+            })
+            .when('/homeCo',{
+                templateUrl: 'templates/homeCo.html',
+                controller: 'homeCoController'
             })
             .otherwise({
                 redirectTo: '/home'
             });
     }
-]);
+]) .run( function($rootScope, $location) {
+
+    // register listener to watch route changes
+    $rootScope.$on( "$routeChangeStart", function(event, next, current) {
+        if(next.$route.templateUrl == 'templates/home.html' || next.$route.templateUrl == 'templates/login.html' || next.$route.templateUrl == 'templates/inscrition.html'){
+            if (localStorage.getItem('token') != null){
+                $location.path("/homeCo")
+            }
+        }else {
+            if (localStorage.getItem('token') == null){
+                $location.path("/home")
+            }
+        }
+    });
+});
+
+
 
 app.constant('api', {'key': '0e03c5b3171e406c9c155ee8acd57992', 'url': 'http://coop.api.netlor.fr/api'});
 
@@ -61,6 +80,10 @@ app.service('TokenService',[function () {
 
 
 app.controller("homeController", ['$scope', function ($scope) {
+
+}]);
+
+app.controller("signupController", ['$scope','Member','TokenService', function ($scope,Member,TokenService) {
 
 }]);
 

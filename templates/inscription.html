@@ -8,14 +8,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#"><img style="width: 64px;" src="img/logo.png" alt="CO'OP" />CO'OP
+                <a class="navbar-brand" href="#!/home"><img style="width: 64px;" src="img/logo.png" alt="CO'OP" />CO'OP
                 </a>
             </div>
             <div id="navbar5" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
                     <li ><a href="#!/home">Accueil</a></li>
-                    <li class="active"><a href="">Connexion</a></li>
-                    <li><a href="#!/signin">Inscription</a></li>
+                    <li ><a href="#!/login">Connexion</a></li>
+                    <li class="active"><a href="#!/signup">Inscription</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -28,9 +28,13 @@
 <div class="container">
     <div class="row">
         <div class="main">
-            <h3>Connexion, ou <a href="#!/signup">Inscription</a></h3>
+            <h3>Inscription, ou <a href="#!/login">Connexion</a></h3>
             <hr class="hr-or">
             <form role="form">
+                <div class="form-group">
+                    <label for="inputName">Nom Complet</label>
+                    <input type="text" class="form-control" id="inputName">
+                </div>
                 <div class="form-group">
                     <label for="inputEmail">Email</label>
                     <input type="text" class="form-control" id="inputEmail">
@@ -39,8 +43,8 @@
                     <label for="inputPassword">Mot de passe</label>
                     <input type="password" class="form-control" id="inputPassword">
                 </div>
-                <button type="submit" ng-click="login()" class="btn btn btn-primary">
-                    Se connecter
+                <button type="submit" ng-click="signup()" class="btn btn btn-primary">
+                    S'Inscrire
                 </button>
             </form>
 
