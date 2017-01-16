@@ -2,6 +2,7 @@ var app = angular.module('coop', ['ngResource','ngRoute']);
 
 app.config(['$routeProvider',
     function($routeProvider) {
+
         // Système de routage
         $routeProvider
             .when('/home', {
@@ -87,19 +88,25 @@ app.controller("signupController", ['$scope','Member','TokenService', function (
 
 }]);
 
-app.controller("startController", ['$scope', 'Member','TokenService',function ($scope, Member,TokenService) {
+app.controller("startController", ['$scope', 'Member','TokenService', '$location',function ($scope, Member,TokenService, $location) {
 
 
     //FONCTION CONNEXION
-    Member.signin({email: $scope.email, password: $scope.password} ,function (m) {
-        $scope.member = m;
-        $scope.members = Member.query({token:$scope.member.token},function (membres) {
-            console.log($scope.members);
-        }, function (error) {
-            //error
-            console.log(error)
-        });
-    });
+    $scope.login = function(){
+      Member.signin({email: $scope.email, password: $scope.password} ,function (m) {
+          $scope.member = m;
+          $scope.members = Member.query({token:$scope.member.token},function (membres) {
+              //console.log($scope.members);
+              $location.path("/home");
+              localStorage.setItem("token", $scope.member.token);
+
+          }, function (error) {
+              //error
+              console.log(error)
+          });
+      });
+    }
+
 
     // FONCTION POUR INSCRIPTION
    /* $scope.newMember = new Member({

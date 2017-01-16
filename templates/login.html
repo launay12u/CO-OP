@@ -32,13 +32,13 @@
             <form role="form">
                 <div class="form-group">
                     <label for="inputEmail">Email</label>
-                    <input type="text" class="form-control" id="inputEmail">
+                    <input ng-model="email" type="text" class="form-control" id="inputEmail">
                 </div>
                 <div class="form-group">
                     <label for="inputPassword">Mot de passe</label>
-                    <input type="password" class="form-control" id="inputPassword">
+                    <input ng-model="password" type="password" class="form-control" id="inputPassword">
                 </div>
-                <button type="submit" ng-click="signin()" class="btn btn btn-primary">
+                <button type="submit" ng-click="login()" class="btn btn btn-primary">
                     Se connecter
                 </button>
             </form>
