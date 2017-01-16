@@ -1,0 +1,42 @@
+.navbar-brand {
+    padding: 0px;
+}
+.navbar-brand>img {
+    height: 100%;
+    padding: 15px;
+    width: auto;
+}
+
+
+/* EXAMPLE 5 - Logo with Text*/
+.nav-with-logo .navbar-brand {
+    display: flex;
+    align-items: center;
+}
+.nav-with-logo .navbar-brand>img {
+    padding: 7px 14px;
+}
+
+.footer-bottom {
+    background-color: #f8f8f8;
+    color: #777;
+    border: 1px solid #e7e7e7;
+    min-height: 30px;
+    width: 100%;
+}
+.copyright {
+    color: #777;
+    line-height: 30px;
+    min-height: 30px;
+    padding: 7px 0;
+}
+.design {
+    color: #777;
+    line-height: 30px;
+    min-height: 30px;
+    padding: 7px 0;
+    text-align: right;
+}
+.design a {
+    color: #777;
+}

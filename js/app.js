@@ -2,8 +2,20 @@ var app = angular.module('coop', ['ngResource']);
 
 app.constant('api', {'key': '0e03c5b3171e406c9c155ee8acd57992', 'url': 'http://coop.api.netlor.fr/api'});
 
-app.config(['$httpProvider', 'api','TokenServiceProvider', function ($httpProvider, api,TokenServiceProvider) {
+app.config(['$httpProvider', 'api', function ($httpProvider, api) {
     $httpProvider.defaults.headers.common.Authorization = "Token token=" + api.key;
+
+    $httpProvider.interceptors.push(['TokenService',function (TokenService) {
+        return {
+            request : function (config) {
+                var token = TokenService.getToken();
+                if(token != ""){
+                    config.url += ((config.url.indexOf('?') >= 0) ? '&' : '?')+'token='+token;
+                }
+                return config;
+            }
+        }
+    }])
 }]);
 
 app.factory("Member", ['$resource', 'api', function ($resource, api) {
@@ -27,7 +39,7 @@ app.service('TokenService',[function () {
 
 app.controller("StartController", ['$scope', 'Member','TokenService',function ($scope, Member,TokenService) {
 
-
+    
     //FONCTION CONNEXION
     Member.signin({email:'guillaume.launay5@etu.univ-lorraine.fr',password:'Password1'},function (m) {
         $scope.member = m;
