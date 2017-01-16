@@ -37,11 +37,15 @@ app.service('TokenService',[function () {
 }]);
 
 
-app.controller("StartController", ['$scope', 'Member','TokenService',function ($scope, Member,TokenService) {
+app.controller("homeController", ['$scope', function ($scope) {
 
-    
+}]);
+
+app.controller("startController", ['$scope', 'Member','TokenService',function ($scope, Member,TokenService) {
+
+
     //FONCTION CONNEXION
-    Member.signin({email:'guillaume.launay5@etu.univ-lorraine.fr',password:'Password1'},function (m) {
+    Member.signin({email: $scope.email, password: $scope.password} ,function (m) {
         $scope.member = m;
         $scope.members = Member.query({token:$scope.member.token},function (membres) {
             console.log($scope.members);
