@@ -1,19 +1,68 @@
-<div class="col-md-6 col-md-offset-3">
-    <h2>Login</h2>
-    <form name="form" ng-submit="vm.login()" role="form">
-        <div class="form-group" ng-class="{ 'has-error': form.username.$dirty && form.username.$error.required }">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" class="form-control" ng-model="vm.username" required />
-            <span ng-show="form.username.$dirty && form.username.$error.required" class="help-block">Username is required</span>
+<!DOCTYPE html>
+<html ng-app="coop">
+<head>
+    <meta http-equiv="content-type" content="text/html" charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width *, inital-scale=1">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../lib/jquery-3.1.1.min.js"></script>
+    <script src="../css/js/bootstrap.min.js"></script>
+    <script src="../lib/angular.min.js"></script>
+    <script src="../lib/angular-resource.min.js"></script>
+    <script src="../js/app.js"></script>
+    <link rel="icon" type="image/png" href="../img/logo.png"/>
+    <title>CO'OP</title>
+</head>
+<body>
+
+<div class=" nav-with-logo">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar5">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><img style="width: 64px;" src="../img/logo.png" alt="CO'OP">CO'OP
+                </a>
+            </div>
+            <div id="navbar5" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li ><a href="../index.html">Accueil</a></li>
+                    <li class="active"><a href="">Connexion</a></li>
+                    <li><a href="#">Inscription</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
         </div>
-        <div class="form-group" ng-class="{ 'has-error': form.password.$dirty && form.password.$error.required }">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control" ng-model="vm.password" required />
-            <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Password is required</span>
-        </div>
-        <div class="form-actions">
-            <button type="submit" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary">Login</button>
-            <a href="#!/register" class="btn btn-link">Register</a>
-        </div>
-    </form>
+        <!--/.container-fluid -->
+    </nav>
+
 </div>
+<div class="container">
+    <div class="row">
+        <div class="main">
+            <h3>Please Log In, or <a href="#">Sign Up</a></h3>
+                <hr class="hr-or">
+            <form role="form">
+                <div class="form-group">
+                    <label for="inputEmail">Email</label>
+                    <input type="text" class="form-control" id="inputEmail">
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" class="form-control" id="inputPassword">
+                </div>
+                <button type="submit" class="btn btn btn-primary">
+                    Se connecter
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+</body>
