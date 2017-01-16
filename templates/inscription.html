@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class=" nav-with-logo">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar5">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><img style="width: 64px;" src="img/logo.png" alt="CO'OP" />CO'OP
+                </a>
+            </div>
+            <div id="navbar5" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li ><a href="#!/home">Accueil</a></li>
+                    <li class="active"><a href="">Connexion</a></li>
+                    <li><a href="#!/signin">Inscription</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+        <!--/.container-fluid -->
+    </nav>
 
-</body>
-</html>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="main">
+            <h3>Connexion, ou <a href="#!/signup">Inscription</a></h3>
+            <hr class="hr-or">
+            <form role="form">
+                <div class="form-group">
+                    <label for="inputEmail">Email</label>
+                    <input type="text" class="form-control" id="inputEmail">
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Mot de passe</label>
+                    <input type="password" class="form-control" id="inputPassword">
+                </div>
+                <button type="submit" ng-click="login()" class="btn btn btn-primary">
+                    Se connecter
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+</div>

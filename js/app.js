@@ -1,4 +1,27 @@
-var app = angular.module('coop', ['ngResource']);
+var app = angular.module('coop', ['ngResource','ngRoute']);
+
+app.config(['$routeProvider',
+    function($routeProvider) {
+
+        // Système de routage
+        $routeProvider
+            .when('/home', {
+                templateUrl: 'templates/home.html',
+                controller: 'homeController'
+            })
+            .when('/login', {
+                templateUrl: 'templates/login.html',
+                controller: 'startController'
+            })
+            .when('/signup',{
+                templateUrl: 'templates/login.html',
+                controller: 'signupController'
+            })
+            .otherwise({
+                redirectTo: '/home'
+            });
+    }
+]);
 
 app.constant('api', {'key': '0e03c5b3171e406c9c155ee8acd57992', 'url': 'http://coop.api.netlor.fr/api'});
 
