@@ -73,7 +73,7 @@ app.controller("startController", ['$scope', 'Member','TokenService', '$location
           $scope.member = m;
           $scope.members = Member.query({token:$scope.member.token},function (membres) {
               //console.log($scope.members);
-              $location.path("/home");
+              $location.path("/homeCo");
               localStorage.setItem("token", $scope.member.token);
 
           }, function (error) {
