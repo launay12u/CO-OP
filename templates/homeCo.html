@@ -31,7 +31,11 @@
                 <div class="panel-heading c-list">
                     <span class="title">Votre équipe</span>
                 </div>
-                <ul class="list-group" id="equipe-list" ng-repeat="member in members">
+                <div class="input-group c-search">
+                    <input class="form-control" id="contact-list-search" type="text" placeholder="Rechercher un membre" ng-model="search_team"/>
+
+                </div>
+                <ul class="list-group" id="equipe-list" ng-repeat="member in members | filter:search_team">
                     <li class="list-group-item">
                         <div class="col-xs-12 col-sm-9">
                             <span class="name">{{member.fullname}}</span><br/>
