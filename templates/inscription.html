@@ -30,18 +30,19 @@
         <div class="main">
             <h3>Inscription, ou <a href="#!/login">Connexion</a></h3>
             <hr class="hr-or">
+            <div ng-bind-html="erreur_div"></div>
             <form role="form">
                 <div class="form-group">
                     <label for="inputName">Nom Complet</label>
-                    <input type="text" class="form-control" id="inputName">
+                    <input ng-model="fullname" type="text" class="form-control" id="inputName">
                 </div>
                 <div class="form-group">
                     <label for="inputEmail">Email</label>
-                    <input type="text" class="form-control" id="inputEmail">
+                    <input ng-model="email" type="text" class="form-control" id="inputEmail">
                 </div>
                 <div class="form-group">
                     <label for="inputPassword">Mot de passe</label>
-                    <input type="password" class="form-control" id="inputPassword">
+                    <input ng-model="password" type="password" class="form-control" id="inputPassword">
                 </div>
                 <button type="submit" ng-click="signup()" class="btn btn btn-primary">
                     S'Inscrire

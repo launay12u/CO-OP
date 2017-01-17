@@ -1,4 +1,5 @@
-var app = angular.module('coop', ['ngResource','ngRoute']);
+var app = angular.module('coop', ['ngResource','ngRoute','ngSanitize']);
+app.constant('api', {'key': '0e03c5b3171e406c9c155ee8acd57992', 'url': 'http://coop.api.netlor.fr/api'});
 
 app.config(['$routeProvider',
     function($routeProvider) {
@@ -6,8 +7,7 @@ app.config(['$routeProvider',
         // Système de routage
         $routeProvider
             .when('/home', {
-                templateUrl: 'templates/home.html',
-                controller: 'homeController'
+                templateUrl: 'templates/home.html'
             })
             .when('/login', {
                 templateUrl: 'templates/login.html',
@@ -25,25 +25,43 @@ app.config(['$routeProvider',
                 redirectTo: '/home'
             });
     }
-]) .run( function($rootScope, $location) {
+]).run(['$rootScope','$location','Member','TokenService',function($rootScope, $location,Member,TokenService) {
 
     // register listener to watch route changes
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
-        if(next.templateUrl == 'templates/home.html' || next.templateUrl == 'templates/login.html' || next.templateUrl == 'templates/inscrition.html'){
+        if(next.templateUrl == 'templates/home.html' || next.templateUrl == 'templates/login.html' || next.templateUrl == 'templates/inscription.html'){
+            //Si Connecté
             if (localStorage.getItem('token') != null){
-                $location.path("/homeCo")
+                //Si encore valide
+                TokenService.setToken(localStorage.getItem('token'));
+                $location.path("/homeCo");
+                Member.testCo({id : localStorage.getItem('id')},function (m) {
+                    $location.path("/homeCo")
+                },function (error) {
+                    TokenService.setToken("");
+                    localStorage.clear();
+                    $location.path("/home");
+                });
             }
         }else {
             if (localStorage.getItem('token') == null){
                 $location.path("/home")
+            }else{
+                TokenService.setToken(localStorage.getItem('token'));
+                Member.testCo({id : localStorage.getItem('id')},function (m) {
+                    $location.path("/homeCo")
+                },function (error) {
+                    TokenService.setToken("");
+                    localStorage.clear();
+                    $location.path("/home");
+                });
             }
         }
     });
-});
+}]);
 
 
 
-app.constant('api', {'key': '0e03c5b3171e406c9c155ee8acd57992', 'url': 'http://coop.api.netlor.fr/api'});
 
 app.config(['$httpProvider', 'api', function ($httpProvider, api) {
     $httpProvider.defaults.headers.common.Authorization = "Token token=" + api.key;
@@ -65,7 +83,8 @@ app.factory("Member", ['$resource', 'api', function ($resource, api) {
     return $resource(api.url + "/members/:id", {id: '@_id'},
         {
             update: {method: 'PUT'},
-            signin: {method: 'POST',url:api.url+'/members/signin'}
+            signin: {method: 'POST',url:api.url+'/members/signin'},
+            testCo: {method : 'GET', url:api.url+'/members/:id/signedin'}
         });
 }]);
 
@@ -79,52 +98,60 @@ app.service('TokenService',[function () {
     }
 }]);
 
+app.controller("homeCoController", ['$scope','Member','TokenService', function ($scope,Member,TokenService) {
+    $scope.user = Member.testCo({id : localStorage.getItem('id')},function (m) {
+        $scope.fullname = $scope.user.fullname
+    },function (error) {
+        console.log(error)
+    });
+   $scope.members = Member.query(function (membres) {
 
-app.controller("homeController", ['$scope', function ($scope) {
-
+    }, function (error) {
+        //error
+        console.log(error)
+    });
 }]);
 
-app.controller("homeCoController", ['$scope', function ($scope) {
+app.controller("signupController", ['$scope','Member','$location', function ($scope,Member,$location) {
+    $scope.signup = function () {
+        $scope.newMember = new Member({
+            fullname:$scope.fullname,
+            email:$scope.email,
+            password:$scope.password
+        });
 
-}]);
-
-app.controller("signupController", ['$scope','Member','TokenService', function ($scope,Member,TokenService) {
+        $scope.newMember.$save(function (m) {
+            $location.path("/login");
+        }, function (error) {
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : "+error.data.error +"</div>"
+          /*  */
+        });
+    }
 
 }]);
 
 app.controller("startController", ['$scope', 'Member','TokenService', '$location',function ($scope, Member,TokenService, $location) {
 
-
     //FONCTION CONNEXION
     $scope.login = function(){
       Member.signin({email: $scope.email, password: $scope.password} ,function (m) {
           $scope.member = m;
-          $scope.members = Member.query({token:$scope.member.token},function (membres) {
-              //console.log($scope.members);
-              $location.path("/homeCo");
-              localStorage.setItem("token", $scope.member.token);
-
-          }, function (error) {
-              //error
-              console.log(error)
-          });
+          TokenService.setToken($scope.member.token);
+          localStorage.setItem('token',$scope.member.token);
+          localStorage.setItem('id',$scope.member._id);
+          $location.path("/homeCo");
+      },function (error) {
+          $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : "+error.data.error +"</div>"
       });
+    };
+
+}]);
+
+app.run(['$rootScope','TokenService','$location',function ($rootScope,TokenService,$location) {
+    $rootScope.disconnect = function () {
+        TokenService.setToken(null);
+        localStorage.clear();
+        $location.path("/home");
+
     }
-
-
-    // FONCTION POUR INSCRIPTION
-   /* $scope.newMember = new Member({
-        fullname:'Guillaume LAUNAY',
-        email:'guillaume.launay5@etu.univ-lorraine.fr',
-        password:'Password1'
-    });
-
-    $scope.newMember.$save(function (m) {
-        console.log($scope.newMember);
-    }, function (error) {
-        //error
-        console.log(error)
-    });
-*/
-
 }]);
