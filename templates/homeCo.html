@@ -13,7 +13,7 @@
             </div>
             <div id="navbar5" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#!/homeCo">{{fullname}}</a></li>
+                    <li class="active"><a href="#!/homeCo">{{fullname}}</a></li>
                     <li><a href="#!/newChannel">Créer un channel</a></li>
                     <li><a href="#" ng-click="disconnect()">Deconnexion</a></li>
                 </ul>
@@ -33,13 +33,13 @@
                 </div>
                 <div class="input-group c-search">
                     <input class="form-control" id="contact-list-search" type="text" placeholder="Rechercher un membre" ng-model="search_team"/>
-
                 </div>
                 <ul class="list-group" id="equipe-list" ng-repeat="member in members | filter:search_team">
                     <li class="list-group-item">
+                        <span class="delete" ng-click="suppr_m(member)">X</span>
                         <div class="col-xs-12 col-sm-9">
                             <span class="name">{{member.fullname}}</span><br/>
-                            <span>{{member.email}}</span>
+                            <span>{{member.email}}</span><br>
                         </div>
                         <div class="clearfix"></div>
                     </li>
@@ -51,11 +51,15 @@
                 <div class="panel-heading c-list">
                     <span class="title">Vos channels</span>
                 </div>
-                <ul class="list-group" id="channel-list" ng-repeat="member in members">
+                <div class="input-group c-search">
+                    <input class="form-control" id="channel-list-search" type="text" placeholder="Rechercher une channel" ng-model="search_channel"/>
+                </div>
+                <ul class="list-group" id="channel-list" ng-repeat="channel in channels | filter:search_channel">
                     <li class="list-group-item">
+                        <span class="delete" ng-click="suppr_c(channel)">X</span>
                         <div class="col-xs-12 col-sm-9">
-                            <span class="name">{{member.fullname}}</span><br/>
-                            <span>{{member.email}}</span>
+                            <a href="#!/channel/{{channel._id}}"><span class="name">{{channel.label}}</span></a><br/>
+                            <span>{{channel.topic}}</span>
                         </div>
                         <div class="clearfix"></div>
                     </li>
