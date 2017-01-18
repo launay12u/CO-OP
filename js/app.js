@@ -1,10 +1,10 @@
-var app = angular.module('coop', ['ngResource','ngRoute','ngSanitize']);
+var app = angular.module('coop', ['ngResource', 'ngRoute', 'ngSanitize']);
 app.constant('api', {'key': '0e03c5b3171e406c9c155ee8acd57992', 'url': 'http://coop.api.netlor.fr/api'});
 
 
 //Routage
 app.config(['$routeProvider',
-    function($routeProvider) {
+    function ($routeProvider) {
         // Système de routage
         $routeProvider
             .when('/home', {
@@ -14,19 +14,19 @@ app.config(['$routeProvider',
                 templateUrl: 'templates/login.html',
                 controller: 'startController'
             })
-            .when('/signup',{
+            .when('/signup', {
                 templateUrl: 'templates/inscription.html',
                 controller: 'signupController'
             })
-            .when('/homeCo',{
+            .when('/homeCo', {
                 templateUrl: 'templates/homeCo.html',
                 controller: 'homeCoController'
             })
-            .when('/newChannel',{
+            .when('/newChannel', {
                 templateUrl: 'templates/newChannel.html',
                 controller: 'newChannelController'
             })
-            .when('/channel/:id',{
+            .when('/channel/:id', {
                 templateUrl: 'templates/channel.html',
                 controller: 'channelController'
             })
@@ -37,30 +37,29 @@ app.config(['$routeProvider',
 ]);
 
 //Verification de connexion
-app.run(['$rootScope','$location','Member','TokenService',function($rootScope, $location,Member,TokenService) {
+app.run(['$rootScope', '$location', 'Member', 'TokenService', function ($rootScope, $location, Member, TokenService) {
 
-    $rootScope.$on( "$routeChangeStart", function(event, next, current) {
-        if(next.templateUrl == 'templates/home.html' || next.templateUrl == 'templates/login.html' || next.templateUrl == 'templates/inscription.html'){
+    $rootScope.$on("$routeChangeStart", function (event, next, current) {
+        if (next.templateUrl == 'templates/home.html' || next.templateUrl == 'templates/login.html' || next.templateUrl == 'templates/inscription.html') {
             //Si Connecté
-            if (localStorage.getItem('token') != null){
+            if (localStorage.getItem('token') != null) {
                 //Si encore valide
                 TokenService.setToken(localStorage.getItem('token'));
-                $location.path("/homeCo");
-                Member.testCo({id : localStorage.getItem('id')},function (m) {
+                Member.testCo({id: localStorage.getItem('id')}, function (m) {
                     $location.path("/homeCo")
-                },function (error) {
+                }, function (error) {
                     TokenService.setToken("");
                     localStorage.clear();
                     $location.path("/home");
                 });
             }
-        }else {
-            if (localStorage.getItem('token') == null){
+        } else {
+            if (localStorage.getItem('token') == null) {
                 $location.path("/home")
-            }else{
+            } else {
                 TokenService.setToken(localStorage.getItem('token'));
-                Member.testCo({id : localStorage.getIteLicencem('id')},function (m) {
-                },function (error) {
+                Member.testCo({id: localStorage.getItem('id')}, function (m) {
+                }, function (error) {
                     TokenService.setToken("");
                     localStorage.clear();
                     $location.path("/home");
@@ -73,12 +72,12 @@ app.run(['$rootScope','$location','Member','TokenService',function($rootScope, $
 app.config(['$httpProvider', 'api', function ($httpProvider, api) {
     $httpProvider.defaults.headers.common.Authorization = "Token token=" + api.key;
 
-    $httpProvider.interceptors.push(['TokenService',function (TokenService) {
+    $httpProvider.interceptors.push(['TokenService', function (TokenService) {
         return {
-            request : function (config) {
+            request: function (config) {
                 var token = TokenService.getToken();
-                if(token != ""){
-                    config.url += ((config.url.indexOf('?') >= 0) ? '&' : '?')+'token='+token;
+                if (token != "") {
+                    config.url += ((config.url.indexOf('?') >= 0) ? '&' : '?') + 'token=' + token;
                 }
                 return config;
             }
@@ -90,136 +89,137 @@ app.factory("Member", ['$resource', 'api', function ($resource, api) {
     return $resource(api.url + "/members/:id", {id: '@_id'},
         {
             update: {method: 'PUT'},
-            signin: {method: 'POST',url:api.url+'/members/signin'},
-            testCo: {method : 'GET', url:api.url+'/members/:id/signedin'},
-            suppr : {method : 'DELETE', url:api.url+'/members/:id'}
+            signin: {method: 'POST', url: api.url + '/members/signin'},
+            testCo: {method: 'GET', url: api.url + '/members/:id/signedin'},
+            suppr: {method: 'DELETE', url: api.url + '/members/:id'}
         });
 }]);
 
-app.factory('Channel',['$resource','api',function ($resource,api) {
-    return $resource(api.url+"/channels/:id",{id:'@_id'},
+app.factory('Channel', ['$resource', 'api', function ($resource, api) {
+    return $resource(api.url + "/channels/:id", {id: '@_id'},
         {
-            suppr : {method : 'DELETE', url:api.url+'/channels/:id'}
+            suppr: {method: 'DELETE', url: api.url + '/channels/:id'}
         });
 }]);
 //Services
-app.service('TokenService',[function () {
+app.service('TokenService', [function () {
     this.token = "";
     this.setToken = function (t) {
         this.token = t;
     };
-    this.getToken = function(){
+    this.getToken = function () {
         return this.token;
     }
 }]);
-// Controllers
-app.controller("homeCoController", ['$rootScope','$scope','Member','Channel', function ($rootScope,$scope,Member,Channel) {
 
+// Controllers
+app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', function ($rootScope, $scope, Member, Channel) {
     $scope.user = Member.testCo({id : localStorage.getItem('id')},function (m) {
         $rootScope.fullname = $scope.user.fullname
     },function (error) {
         console.log(error)
     });
-   $scope.members = Member.query(function (membres) {
-
+    
+    $scope.members = Member.query(function (membres) {
+        $rootScope.fullname = m.fullname;
     }, function (error) {
         //error
         console.log(error)
     });
 
     $scope.suppr_m = function (m) {
-       Member.suppr({id: m._id},function () {
-           $scope.members = Member.query(function (membres) {
+        Member.suppr({id: m._id}, function () {
+            $scope.members = Member.query(function (membres) {
 
-           }, function (error) {
-               //error
-               console.log(error)
-           });
-       },function (error) {
-           console.log(error)
-       })
-   };
+            }, function (error) {
+                //error
+                console.log(error)
+            });
+        }, function (error) {
+            console.log(error)
+        })
+    };
 
-   $scope.channels = Channel.query(function (channels) {
-   },function (error) {
-       console.log(error);
-   });
+    $scope.channels = Channel.query(function (channels) {
+    }, function (error) {
+        console.log(error);
+    });
 
     $scope.suppr_c = function (m) {
-        Channel.suppr({id: m._id},function () {
+        Channel.suppr({id: m._id}, function () {
             $scope.channels = Channel.query(function (membres) {
 
             }, function (error) {
                 //error
                 console.log(error)
             });
-        },function (error) {
+        }, function (error) {
             console.log(error)
         })
     };
 }]);
-app.controller('channelController', ['$scope','Channel','$routeParams','$location',function ($scope, Channel,$routeParams, $location) {
-    $scope.channel = Channel.get({id : $routeParams.id},function (success) {
+app.controller('channelController', ['$scope', 'Channel', '$routeParams', '$location', function ($scope, Channel, $routeParams, $location) {
+    $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
 
-    },function (error) {
+    }, function (error) {
 
     });
 
 }]);
 
-app.controller("signupController", ['$scope','Member','$location', function ($scope,Member,$location) {
+app.controller("signupController", ['$scope', 'Member', '$location', function ($scope, Member, $location) {
     $scope.signup = function () {
         $scope.newMember = new Member({
-            fullname:$scope.fullname,
-            email:$scope.email,
-            password:$scope.password
+            fullname: $scope.fullname,
+            email: $scope.email,
+            password: $scope.password
         });
 
         $scope.newMember.$save(function (m) {
             $location.path("/login");
         }, function (error) {
-            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : "+error.data.error +"</div>"
-          /*  */
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : " + error.data.error + "</div>"
+            /*  */
         });
     }
 
 }]);
-app.controller("newChannelController", ['$scope', 'Channel','$location',function ($scope, Channel, $location) {
+app.controller("newChannelController", ['$scope', 'Channel', '$location', function ($scope, Channel, $location) {
     $scope.newChannel = function () {
-        if ($scope.topic == null){
+        if ($scope.topic == null) {
             $scope.topic = "Pas de sujet spécifié"
         }
         $scope.channel = new Channel({
-            label : $scope.label,
-            topic : $scope.topic
+            label: $scope.label,
+            topic: $scope.topic
         });
 
         $scope.channel.$save(function () {
             $location.path('/homeCo');
-        },function (error) {
-            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : "+error.data.error +"</div>"
+        }, function (error) {
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : " + error.data.error + "</div>"
         })
     }
 }]);
 
-app.controller("startController", ['$scope', 'Member','TokenService', '$location',function ($scope, Member,TokenService, $location) {
+app.controller("startController", ['$scope', 'Member', 'TokenService', '$location', function ($scope, Member, TokenService, $location) {
 
     //FONCTION CONNEXION
-    $scope.login = function(){
-      Member.signin({email: $scope.email, password: $scope.password} ,function (m) {
-          $scope.member = m;
-          TokenService.setToken($scope.member.token);
-          localStorage.setItem('token',$scope.member.token);
-          localStorage.setItem('id',$scope.member._id);
-          $location.path("/homeCo");
-      },function (error) {
-          $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : "+error.data.error +"</div>"
-      });
+    $scope.login = function () {
+        Member.signin({email: $scope.email, password: $scope.password}, function (m) {
+            $scope.member = m;
+            TokenService.setToken($scope.member.token);
+            localStorage.setItem('token', $scope.member.token);
+            localStorage.setItem('id', $scope.member._id);
+            $location.path("/homeCo");
+        }, function (error) {
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : " + error.data.error + "</div>"
+        });
     };
 
 }]);
 //Function deco disponible dans tout les scopes
-app.run(['$rootScope','TokenService','$location',function ($rootScope,TokenService,$location) {
+app.run(['$rootScope', 'TokenService', '$location', function ($rootScope, TokenService, $location) {
     $rootScope.disconnect = function () {
         TokenService.setToken(null);
         localStorage.clear();
