@@ -38,6 +38,19 @@ app.config(['$routeProvider',
 
 //Verification de connexion
 app.run(['$rootScope', '$location', 'Member', 'TokenService', function ($rootScope, $location, Member, TokenService) {
+    $rootScope.disconnect = function () {
+        TokenService.setToken(null);
+        localStorage.clear();
+        $location.path("/home");
+
+    };
+    TokenService.setToken(localStorage.getItem('token'));
+    Member.testCo({id :localStorage.getItem('id')},function (m) {
+        $rootScope.fullname = m.fullname
+    },function (error) {
+        localStorage.clear();
+        TokenService.setToken('');
+    });
 
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
         if (next.templateUrl == 'templates/home.html' || next.templateUrl == 'templates/login.html' || next.templateUrl == 'templates/inscription.html') {
@@ -88,7 +101,6 @@ app.config(['$httpProvider', 'api', function ($httpProvider, api) {
 app.factory("Member", ['$resource', 'api', function ($resource, api) {
     return $resource(api.url + "/members/:id", {id: '@_id'},
         {
-            update: {method: 'PUT'},
             signin: {method: 'POST', url: api.url + '/members/signin'},
             testCo: {method: 'GET', url: api.url + '/members/:id/signedin'},
             suppr: {method: 'DELETE', url: api.url + '/members/:id'}
@@ -98,7 +110,11 @@ app.factory("Member", ['$resource', 'api', function ($resource, api) {
 app.factory('Channel', ['$resource', 'api', function ($resource, api) {
     return $resource(api.url + "/channels/:id", {id: '@_id'},
         {
-            suppr: {method: 'DELETE', url: api.url + '/channels/:id'}
+            suppr: {method: 'DELETE', url: api.url + '/channels/:id'},
+            getPost : {method : 'GET', url: api.url + '/channels/:id/posts', isArray: true},
+            addPost : {method : 'POST', url: api.url + '/channels/:id/posts'},
+            setPost :{method : 'PUT', url: api.url + '/channels/:id/posts/:id_post'},
+            delPost : {method : 'DELETE', url: api.url + '/channels/:id/posts/:id_post'}
         });
 }]);
 //Services
@@ -112,16 +128,28 @@ app.service('TokenService', [function () {
     }
 }]);
 
+app.service('DateService',function () {
+   this.getDate = function (d) {
+        var array = d.split('T');
+        var date = array[0];
+        var time = array[1];
+        var date_refactor = date.split('-').reverse().join('-');
+        var array_time = time.split(':');
+        var time_refactor = array_time[0]+":"+array_time[1];
+        return "Le "+date_refactor+" à "+time_refactor;
+   }
+});
+
 // Controllers
 app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', function ($rootScope, $scope, Member, Channel) {
-    $scope.user = Member.testCo({id : localStorage.getItem('id')},function (m) {
-        $rootScope.fullname = $scope.user.fullname
-    },function (error) {
-        console.log(error)
-    });
     
     $scope.members = Member.query(function (membres) {
-        $rootScope.fullname = m.fullname;
+        for (var i = 0; i < $scope.members.length; i++) {
+            angular.forEach(membres, function(value, key) {
+                value.me = value._id == localStorage.getItem('id');
+            });
+
+        }
     }, function (error) {
         //error
         console.log(error)
@@ -158,12 +186,66 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
         })
     };
 }]);
-app.controller('channelController', ['$scope', 'Channel', '$routeParams', '$location', function ($scope, Channel, $routeParams, $location) {
+app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams','DateService', function ($scope,Member, Channel, $routeParams, DateService) {
     $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
 
     }, function (error) {
 
     });
+    $scope.posts = Channel.getPost({id:$routeParams.id},function (posts) {
+        angular.forEach(posts, function(value, key) {
+            value.time = DateService.getDate(value.created_at);
+            Member.query(function (members) {
+                var find = false;
+                angular.forEach(members, function (val,k) {
+                    if (val._id == value.member_id || !find){
+                        value.member_fullname = val.fullname;
+                        find = true
+                    }
+                });
+                if (!find){
+                    value.member_fullname ="Ancien membre";
+                }
+            },function (error) {
+                console.log(error)
+            })
+        });
+    },function (error) {
+
+    });
+
+    $scope.addMessage = function () {
+        if($scope.message != ""){
+            Channel.addPost({id:$routeParams.id},{message:$scope.message},function (success) {
+                $scope.message ="";
+                $scope.posts = Channel.getPost({id:$routeParams.id},function (posts) {
+                    angular.forEach(posts, function(value, key) {
+                        value.time = DateService.getDate(value.created_at);
+                        Member.query(function (members) {
+                            var find = false;
+                            angular.forEach(members, function (val,k) {
+                                if (val._id == value.member_id || !find){
+                                    value.member_fullname = val.fullname;
+                                    find = true
+                                }
+                            });
+                            if (!find){
+                                value.member_fullname ="Ancien membre";
+                            }
+                        },function (error) {
+                            console.log(error)
+                        })
+                    });
+                },function (error) {
+                    console.log(error)
+                });
+            },function (error) {
+                console.log(error)
+
+            });
+        }
+
+    };
 
 }]);
 
@@ -217,15 +299,6 @@ app.controller("startController", ['$scope', 'Member', 'TokenService', '$locatio
         });
     };
 
-}]);
-//Function deco disponible dans tout les scopes
-app.run(['$rootScope', 'TokenService', '$location', function ($rootScope, TokenService, $location) {
-    $rootScope.disconnect = function () {
-        TokenService.setToken(null);
-        localStorage.clear();
-        $location.path("/home");
-
-    }
 }]);
 
 

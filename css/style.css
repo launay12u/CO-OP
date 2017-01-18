@@ -287,6 +287,10 @@ body::-webkit-scrollbar {
     width: 75%;
 }
 
-.msg-separator:last-child{
-    display: none;
+.topic, .email{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: 100%;
 }

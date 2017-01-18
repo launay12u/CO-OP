@@ -34,12 +34,14 @@
                 <div class="input-group c-search">
                     <input class="form-control" id="contact-list-search" type="text" placeholder="Rechercher un membre" ng-model="search_team"/>
                 </div>
-                <ul class="list-group" id="equipe-list" ng-repeat="member in members | filter:search_team">
+                <ul class="list-group" id="equipe-list" ng-repeat="member in members | filter:search_team | orderBy:'-me'">
                     <li class="list-group-item">
-                        <span class="delete" ng-click="suppr_m(member)">X</span>
+                        <div ng-show="!{{member.me}}" >
+                        <span class="delete" ng-click="suppr_m(member)" >X</span>
+                        </div>
                         <div class="col-xs-12 col-sm-9">
                             <span class="name">{{member.fullname}}</span><br/>
-                            <span>{{member.email}}</span><br>
+                            <span class="email">{{member.email}}</span><br>
                         </div>
                         <div class="clearfix"></div>
                     </li>
@@ -58,8 +60,8 @@
                     <li class="list-group-item">
                         <span class="delete" ng-click="suppr_c(channel)">X</span>
                         <div class="col-xs-12 col-sm-9">
-                            <a href="#!/channel/{{channel._id}}"><span class="name">{{channel.label}}</span></a><br/>
-                            <span>{{channel.topic}}</span>
+                            <span class="name"><a href="#!/channel/{{channel._id}}">{{channel.label}}</a></span><br/>
+                            <span class="topic">{{channel.topic}}</span>
                         </div>
                         <div class="clearfix"></div>
                     </li>

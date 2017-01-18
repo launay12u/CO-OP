@@ -8,7 +8,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#!/home"><img style="width: 64px;" src="img/logo.png" alt="CO'OP" />CO'OP
+                <a class="navbar-brand" href="#!/home"><img style="width: 64px;" src="img/logo.png" alt="CO'OP"/>CO'OP
                 </a>
             </div>
             <div id="navbar5" class="navbar-collapse collapse">
@@ -26,40 +26,28 @@
 </div>
 <div class="container">
     <div class="page-header">
-        <h1>{{channel.label}}<br><small>{{channel.topic}}</small></h1>
+        <h1>{{channel.label}}<br>
+            <small>{{channel.topic}}</small>
+        </h1>
     </div>
     <hr>
     <div class="msg-wrap">
-        <div class="media msg">
-            <div class="media-body">
-                <small class="pull-right time"><i class="fa fa-clock-o"></i> 12:10am</small>
-                <h5 class="media-heading">Naimish Sakhpara</h5>
-                <small class="col-lg-10">Location H-2, Ayojan Nagar, Near Gate-3, Near
-                    Shreyas Crossing Dharnidhar Derasar,
-                    Paldi, Ahmedabad 380007, Ahmedabad,
-                    India
-                    Phone 091 37 669307
-                    Email aapamdavad.district@gmail.com</small>
+        <div ng-repeat=" post in posts | orderBy:'-created_at'">
+            <div class="media msg">
+                <div class="media-body">
+                    <small class="pull-right time"><i class="fa fa-clock-o"></i>{{post.time}}</small>
+                    <h5 class="media-heading">{{post.member_fullname}}</h5>
+                    <small class="col-lg-10">{{post.message}}
+                    </small>
+                </div>
             </div>
+            <hr class="msg-separator" ng-if="!$last">
         </div>
-        <hr class="msg-separator">
-        <div class="media msg">
-            <div class="media-body">
-                <small class="pull-right time"> 12:10am</small>
-                <h5 class="media-heading">Naimish Sakhpara</h5>
-                <small class="col-lg-10">Location H-2, Ayojan Nagar, Near Gate-3, Near
-                    Shreyas Crossing Dharnidhar Derasar,
-                    Paldi, Ahmedabad 380007, Ahmedabad,
-                    India
-                    Phone 091 37 669307
-                    Email aapamdavad.district@gmail.com</small>
-            </div>
-        </div>
-        <hr class="msg-separator">
     </div>
     <div class="send-wrap ">
-        <textarea class="form-control send-message" placeholder="Ecrire votre message" rows="2"></textarea>
-        <button type="button" class="btn btn-primary button-send">Envoyer</button>
+        <textarea class="form-control send-message" placeholder="Ecrire votre message" rows="2"
+                  ng-model="message"></textarea>
+        <button type="button" class="btn btn-primary button-send" ng-click="addMessage()">Envoyer</button>
     </div>
 </div>
 </div>
