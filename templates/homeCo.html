@@ -36,9 +36,7 @@
                 </div>
                 <ul class="list-group" id="equipe-list" ng-repeat="member in members | filter:search_team | orderBy:'-me'">
                     <li class="list-group-item">
-                        <div ng-show="!{{member.me}}" >
-                        <span class="delete" ng-click="suppr_m(member)" >X</span>
-                        </div>
+                        <span ng-show="!{{member.me}}" class="delete" ng-click="suppr_m(member)" >X</span>
                         <div class="col-xs-12 col-sm-9">
                             <span class="name">{{member.fullname}}</span><br/>
                             <span class="email">{{member.email}}</span><br>
