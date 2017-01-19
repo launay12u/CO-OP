@@ -294,3 +294,12 @@ body::-webkit-scrollbar {
     display: inline-block;
     max-width: 100%;
 }
+
+.page-header > input {
+  display: block;
+  margin: 1%;
+}
+
+.page-header > a {
+  margin-left: 1%;
+}

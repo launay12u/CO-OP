@@ -111,6 +111,7 @@ app.factory('Channel', ['$resource', 'api', function ($resource, api) {
     return $resource(api.url + "/channels/:id", {id: '@_id'},
         {
             suppr: {method: 'DELETE', url: api.url + '/channels/:id'},
+            editChannel : {method: 'PUT', url: api.url+'/channels/:id'},
             getPost : {method : 'GET', url: api.url + '/channels/:id/posts', isArray: true},
             addPost : {method : 'POST', url: api.url + '/channels/:id/posts'},
             setPost :{method : 'PUT', url: api.url + '/channels/:id/posts/:id_post'},
@@ -142,8 +143,6 @@ app.service('DateService',function () {
 
 // Controllers
 app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', '$interval',function ($rootScope, $scope, Member, Channel, $interval) {
-
-
 
     $scope.members = Member.query(function (membres) {
         for (var i = 0; i < $scope.members.length; i++) {
@@ -196,6 +195,8 @@ app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams
   }, 1000);
   */
     $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
+      $scope.topic = success.topic;
+      $scope.label = success.label;
 
     }, function (error) {
     });
@@ -207,6 +208,8 @@ app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams
           angular.forEach(posts, function(value, key) {
               value.me = value.member_id == localStorage.getItem("id");
               value.time = DateService.getDate(value.created_at);
+              value.update = DateService.getDate(value.updated_at);
+              value.has_update = value.time < value.update;
               var find = false;
               angular.forEach($scope.members, function (val,k) {
                   if (val._id == value.member_id){
@@ -224,6 +227,16 @@ app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams
 
       });
     }
+
+    $scope.edit=false;
+    $scope.updateChannel = function (id) {
+        if($scope.edit != true){
+            $scope.edit=true;
+        }else{
+            Channel.editChannel({id:$routeParams.id},{label:$scope.label,topic:$scope.topic});
+            $scope.edit=false;
+        }
+    };
 
     $scope.reload();
 

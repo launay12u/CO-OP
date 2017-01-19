@@ -26,15 +26,23 @@
 </div>
 <div class="container">
     <div class="page-header">
-        <h1>{{channel.label}}<br>
-            <small>{{channel.topic}}</small>
+
+
+        <h1 ng-model="label" ng-show="! edit">{{label}}<br>
+            <small ng-model="topic" ng-show="! edit">{{topic}}</small>
         </h1>
+        <a ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show="! edit"> modifier</a>
+
+        <input type="text" ng-model="label" ng-show="edit" ng-hide="true" value="{{label}}">
+        <input type="text" ng-model="topic" ng-show="edit" ng-hide="true" value="{{topic}}">
+        <a ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show=" edit"> valider</a>
     </div>
     <hr>
     <div class="msg-wrap">
         <div ng-repeat=" post in posts | orderBy:'-created_at'">
             <div class="media msg" >
                 <div class="media-body" >
+                  <small class="pull-right time" ng-show="{{post.has_update}}"><i class="fa fa-clock-o"></i>, Modifier : {{post.update}}</small>
                     <small class="pull-right time"><i class="fa fa-clock-o"></i>{{post.time}}</small>
                     <br/>
                     <button class="btn btn-danger pull-right" ng-click="supprimerMessage(post)" ng-show="{{post.me}}">Supprimer message</button>
