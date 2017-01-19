@@ -39,7 +39,7 @@
     </div>
     <hr>
     <div class="msg-wrap">
-        <div ng-repeat=" post in posts | orderBy:'-created_at'">
+        <div ng-repeat=" post in posts | orderBy:'created_at'">
             <div class="media msg" >
                 <div class="media-body" >
                   <small class="pull-right time" ng-show="{{post.has_update}}"><i class="fa fa-clock-o"></i>, Modifier : {{post.update}}</small>
@@ -57,6 +57,7 @@
                 </div>
             </div>
             <hr class="msg-separator" ng-if="!$last">
+            <div id="anchor" ng-if="$last"></div>
         </div>
     </div>
     <div class="send-wrap ">
