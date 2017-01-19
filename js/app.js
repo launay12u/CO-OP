@@ -141,8 +141,10 @@ app.service('DateService',function () {
 });
 
 // Controllers
-app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', function ($rootScope, $scope, Member, Channel) {
-    
+app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', '$interval',function ($rootScope, $scope, Member, Channel, $interval) {
+
+
+
     $scope.members = Member.query(function (membres) {
         for (var i = 0; i < $scope.members.length; i++) {
             angular.forEach(membres, function(value, key) {
@@ -186,7 +188,13 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
         })
     };
 }]);
-app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams','DateService', function ($scope,Member, Channel, $routeParams, DateService) {
+app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams','DateService', '$interval', function ($scope,Member, Channel, $routeParams, DateService, $interval) {
+  /**
+  $interval(function (i) {
+    console.log("ok");
+    $scope.reload();
+  }, 1000);
+  */
     $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
 
     }, function (error) {
@@ -194,57 +202,69 @@ app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams
 
     $scope.members = Member.query();
 
-    $scope.posts = Channel.getPost({id:$routeParams.id},function (posts) {
-        angular.forEach(posts, function(value, key) {
-            value.time = DateService.getDate(value.created_at);
-            var find = false;
-            angular.forEach($scope.members, function (val,k) {
-                if (val._id == value.member_id){
-                    value.member_fullname = val.fullname;
-                    find = true
-                }
-            });
-            if (!find){
-                value.member_fullname = "Ancien membre";
-            }
-            },function (error) {
-                console.log(error)
-            })
-    },function (error) {
+    $scope.reload = function(){
+      $scope.posts = Channel.getPost({id:$routeParams.id},function (posts) {
+          angular.forEach(posts, function(value, key) {
+              value.me = value.member_id == localStorage.getItem("id");
+              value.time = DateService.getDate(value.created_at);
+              var find = false;
+              angular.forEach($scope.members, function (val,k) {
+                  if (val._id == value.member_id){
+                      value.member_fullname = val.fullname;
+                      find = true
+                  }
+              });
+              if (!find){
+                  value.member_fullname = "Ancien membre";
+              }
+              },function (error) {
+                  console.log(error)
+              })
+      },function (error) {
 
-    });
+      });
+    }
+
+    $scope.reload();
 
     $scope.addMessage = function () {
         if($scope.message != ""){
             Channel.addPost({id:$routeParams.id},{message:$scope.message},function (success) {
                 $scope.message ="";
-                $scope.posts = Channel.getPost({id:$routeParams.id},function (posts) {
-                    angular.forEach(posts, function(value, key) {
-                        value.time = DateService.getDate(value.created_at);
-                        Member.query(function (members) {
-                            var find = false;
-                            angular.forEach(members, function (val,k) {
-                                if (val._id == value.member_id || !find){
-                                    value.member_fullname = val.fullname;
-                                    find = true
-                                }
-                            });
-                            if (!find){
-                                value.member_fullname ="Ancien membre";
-                            }
-                        },function (error) {
-                            console.log(error)
-                        })
-                    });
-                },function (error) {
-                    console.log(error)
-                });
+                $scope.reload();
             },function (error) {
                 console.log(error)
-
             });
         }
+    };
+    $scope.edit_msg = false;
+    $scope.editMessage = function (p){
+      if (p.member_id == localStorage.getItem("id")){
+          this.edit_msg = true;
+          this.new = this.msg;
+      }
+    };
 
+    $scope.validMessage = function (p){
+      var self = this;
+
+      var c = Channel.setPost({id:$routeParams.id, id_post:p._id},{message:this.new}, function(success){
+        self.edit_msg = false;
+        $scope.reload();
+
+      }, function(error){
+        console.log(error);
+      });
+    };
+
+    $scope.supprimerMessage = function(p){
+      if (p.member_id == localStorage.getItem("id")){
+        Channel.delPost({id:$routeParams.id, id_post:p._id}, function(success){
+          $scope.reload();
+        }, function(error){
+          console.log(error);
+        });
+      }
     };
 
 }]);

@@ -33,11 +33,18 @@
     <hr>
     <div class="msg-wrap">
         <div ng-repeat=" post in posts | orderBy:'-created_at'">
-            <div class="media msg">
-                <div class="media-body">
+            <div class="media msg" >
+                <div class="media-body" >
                     <small class="pull-right time"><i class="fa fa-clock-o"></i>{{post.time}}</small>
+                    <br/>
+                    <button class="btn btn-danger pull-right" ng-click="supprimerMessage(post)" ng-show="{{post.me}}">Supprimer message</button>
                     <h5 class="media-heading">{{post.member_fullname}}</h5>
-                    <small class="col-lg-10">{{post.message}}
+                    <small class="col-lg-10" ng-click="editMessage(post)" ng-model="msg" ng-show="!edit_msg">
+                      {{post.message}}
+                    </small>
+                    <small ng-show="edit_msg">
+                      <input type="text" ng-model="new" placeholder="{{post.message}}" value="{{post.message}}"/>
+                      <button ng-click="validMessage(post)">Valider</button>
                     </small>
                 </div>
             </div>
