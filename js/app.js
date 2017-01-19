@@ -192,24 +192,25 @@ app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams
     }, function (error) {
 
     });
+
+    $scope.members = Member.query();
+
     $scope.posts = Channel.getPost({id:$routeParams.id},function (posts) {
         angular.forEach(posts, function(value, key) {
             value.time = DateService.getDate(value.created_at);
-            Member.query(function (members) {
-                var find = false;
-                angular.forEach(members, function (val,k) {
-                    if (val._id == value.member_id || !find){
-                        value.member_fullname = val.fullname;
-                        find = true
-                    }
-                });
-                if (!find){
-                    value.member_fullname ="Ancien membre";
+            var find = false;
+            angular.forEach($scope.members, function (val,k) {
+                if (val._id == value.member_id){
+                    value.member_fullname = val.fullname;
+                    find = true
                 }
+            });
+            if (!find){
+                value.member_fullname = "Ancien membre";
+            }
             },function (error) {
                 console.log(error)
             })
-        });
     },function (error) {
 
     });
