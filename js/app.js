@@ -190,7 +190,6 @@ app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams
     $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
 
     }, function (error) {
-
     });
 
     $scope.members = Member.query();
