@@ -37,7 +37,7 @@ app.config(['$routeProvider',
 ]);
 
 //Verification de connexion
-app.run(['$rootScope', '$location', 'Member', 'TokenService', function ($rootScope, $location, Member, TokenService) {
+app.run(['$rootScope', '$location', 'Member', 'TokenService','$interval', function ($rootScope, $location, Member, TokenService,$intrval) {
     $rootScope.disconnect = function () {
         TokenService.setToken(null);
         localStorage.clear();
@@ -52,7 +52,7 @@ app.run(['$rootScope', '$location', 'Member', 'TokenService', function ($rootSco
         TokenService.setToken('');
     });
 
-    $rootScope.$on("$routeChangeStart", function (event, next, current) {
+    $rootScope.$on("$routeChangeStart", function (event, next) {
         if (next.templateUrl == 'templates/home.html' || next.templateUrl == 'templates/login.html' || next.templateUrl == 'templates/inscription.html') {
             //Si Connecté
             if (localStorage.getItem('token') != null) {
@@ -95,7 +95,7 @@ app.config(['$httpProvider', 'api', function ($httpProvider, api) {
                 return config;
             }
         }
-    }])
+    }]);
 }]);
 //Factory
 app.factory("Member", ['$resource', 'api', function ($resource, api) {
@@ -187,13 +187,14 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
         })
     };
 }]);
-app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams','DateService', '$interval', function ($scope,Member, Channel, $routeParams, DateService, $interval) {
+app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams','DateService', '$interval','$location','$timeout',function ($scope,Member, Channel, $routeParams, DateService, $interval,$location,$timeout) {
   /**
   $interval(function (i) {
     console.log("ok");
     $scope.reload();
   }, 1000);
   */
+
     $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
       $scope.topic = success.topic;
       $scope.label = success.label;
@@ -220,13 +221,16 @@ app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams
               if (!find){
                   value.member_fullname = "Ancien membre";
               }
-              },function (error) {
-                  console.log(error)
-              })
+          });
+          $timeout(function () {
+              var objDiv = document.getElementById("wrap");
+              objDiv.scrollTop = objDiv.scrollHeight;
+          },1)
       },function (error) {
 
       });
-    }
+
+    };
 
     $scope.edit=false;
     $scope.updateChannel = function (id) {
@@ -261,7 +265,7 @@ app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams
     $scope.validMessage = function (p){
       var self = this;
 
-      var c = Channel.setPost({id:$routeParams.id, id_post:p._id},{message:this.new}, function(success){
+      Channel.setPost({id:$routeParams.id, id_post:p._id},{message:this.new}, function(success){
         self.edit_msg = false;
         $scope.reload();
 
@@ -333,6 +337,4 @@ app.controller("startController", ['$scope', 'Member', 'TokenService', '$locatio
     };
 
 }]);
-
-
-//TODO : Verifier la validité du token avant chaque action
+//TODO check token before

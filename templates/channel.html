@@ -1,69 +1,76 @@
-<div class=" nav-with-logo">
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar5">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#!/home"><img style="width: 64px;" src="img/logo.png" alt="CO'OP"/>CO'OP
-                </a>
+<div>
+    <div class=" nav-with-logo">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar5">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#!/home"><img style="width: 64px;" src="img/logo.png" alt="CO'OP"/>CO'OP
+                    </a>
+                </div>
+                <div id="navbar5" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#!/homeCo">{{fullname}}</a></li>
+                        <li><a href="#!/newChannel">Créer un channel</a></li>
+                        <li><a href="#" ng-click="disconnect()">Deconnexion</a></li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
             </div>
-            <div id="navbar5" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#!/homeCo">{{fullname}}</a></li>
-                    <li><a href="#!/newChannel">Créer un channel</a></li>
-                    <li><a href="#" ng-click="disconnect()">Deconnexion</a></li>
-                </ul>
-            </div>
-            <!--/.nav-collapse -->
-        </div>
-        <!--/.container-fluid -->
-    </nav>
+            <!--/.container-fluid -->
+        </nav>
 
-</div>
-<div class="container">
-    <div class="page-header">
-
-
-        <h1 ng-model="label" ng-show="! edit">{{label}}<br>
-            <small ng-model="topic" ng-show="! edit">{{topic}}</small>
-        </h1>
-        <a ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show="! edit"> modifier</a>
-
-        <input type="text" ng-model="label" ng-show="edit" ng-hide="true" value="{{label}}">
-        <input type="text" ng-model="topic" ng-show="edit" ng-hide="true" value="{{topic}}">
-        <a ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show=" edit"> valider</a>
     </div>
-    <hr>
-    <div class="msg-wrap">
-        <div ng-repeat=" post in posts | orderBy:'created_at'">
-            <div class="media msg" >
-                <div class="media-body" >
-                  <small class="pull-right time" ng-show="{{post.has_update}}"><i class="fa fa-clock-o"></i>, Modifier : {{post.update}}</small>
-                    <small class="pull-right time"><i class="fa fa-clock-o"></i>{{post.time}}</small>
-                    <br/>
-                    <button class="btn btn-danger pull-right" ng-click="supprimerMessage(post)" ng-show="{{post.me}}">Supprimer message</button>
-                    <h5 class="media-heading">{{post.member_fullname}}</h5>
-                    <small class="col-lg-10" ng-click="editMessage(post)" ng-model="msg" ng-show="!edit_msg">
-                      {{post.message}}
-                    </small>
-                    <small ng-show="edit_msg">
-                      <input type="text" ng-model="new" placeholder="{{post.message}}" value="{{post.message}}"/>
-                      <button ng-click="validMessage(post)">Valider</button>
-                    </small>
+    <div class="container">
+        <div class="page-header">
+            <h1 ng-model="label" ng-show="! edit">{{label}}<br>
+                <small ng-model="topic" ng-show="! edit">{{topic}}</small>
+            </h1>
+            <button ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show="! edit"> modifier
+            </button>
+            <input type="text" ng-model="label" ng-show="edit" ng-hide="true" value="{{label}}">
+            <input type="text" ng-model="topic" ng-show="edit" ng-hide="true" value="{{topic}}">
+            <a ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show=" edit"> valider</a>
+        </div>
+        <hr>
+        <div class="col-lg-10 col-lg-offset-1">
+        <div class="msg-wrap" id="wrap">
+            <div ng-repeat=" post in posts | orderBy:'created_at'">
+                <div class="media msg msg_{{post.me}}">
+                    <div class="media-body">
+                        <div class="pull-right">
+                            <small class=" time">{{post.time}}</small>
+                            <i class="fa fa-trash delete_post" aria-hidden="true" ng-click="supprimerMessage(post)"
+                               ng-show="{{post.me}}"></i>
+                        </div>
+                        <h5 class="media-heading">{{post.member_fullname}}</h5>
+                        <small class="col-lg-10" ng-click="editMessage(post)" ng-model="msg" ng-show="!edit_msg">
+                            {{post.message}}
+                            <span class="time" ng-show="{{post.has_update}}">(Modifier {{post.update}})</span>
+                        </small>
+                        <small ng-show="edit_msg">
+                            <form>
+                                <input type="text" ng-model="new" placeholder="{{post.message}}"
+                                       value="{{post.message}}"/>
+                                <button ng-click="validMessage(post)">Valider</button>
+                            </form>
+                        </small>
+                    </div>
                 </div>
             </div>
-            <hr class="msg-separator" ng-if="!$last">
-            <div id="anchor" ng-if="$last"></div>
         </div>
-    </div>
-    <div class="send-wrap ">
+        <div class="send-wrap ">
+            <form>
         <textarea class="form-control send-message" placeholder="Ecrire votre message" rows="2"
                   ng-model="message"></textarea>
-        <button type="button" class="btn btn-primary button-send" ng-click="addMessage()">Envoyer</button>
+                <button type="button" class="btn btn-primary button-send" ng-click="addMessage()">Envoyer</button>
+            </form>
+        </div>
+    </div>
     </div>
 </div>
-</div>
+
