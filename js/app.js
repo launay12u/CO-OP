@@ -188,9 +188,15 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
     };
 }]);
 app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParams', 'DateService', '$interval', '$location', '$timeout', function ($scope, Member, Channel, $routeParams, DateService, $interval, $location, $timeout) {
+    arraysAreEqual = function (ary1, ary2) {
+        return (ary1.join('') == ary2.join(''));
+    };
+    $scope.edit = false;
+    $scope.edit_msg = false;
 
     $interval(function (i) {
-        $scope.reload();
+        if (!$scope.edit_msg)
+            $scope.reload();
     }, 1000);
 
     $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
@@ -227,9 +233,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 
     });
 
-    arraysAreEqual = function (ary1, ary2) {
-        return (ary1.join('') == ary2.join(''));
-    };
+
 
     $scope.reload = function () {
         var new_list_post = Channel.getPost({id: $routeParams.id}, function (posts) {
@@ -262,7 +266,6 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
         });
     };
 
-    $scope.edit = false;
     $scope.updateChannel = function () {
         if ($scope.edit != true) {
             $scope.edit = true;
@@ -283,7 +286,6 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
             });
         }
     };
-    $scope.edit_msg = false;
     $scope.editMessage = function (p) {
         if (p.member_id == localStorage.getItem("id")) {
             this.edit_msg = true;
