@@ -339,8 +339,10 @@ body {
 .time{
     color: gray;
 }
+i{
+    cursor: pointer;
 
+}
 .delete_post{
     color: rgb(224, 50, 50);
-    cursor: pointer;
 }
