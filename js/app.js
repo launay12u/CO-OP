@@ -239,15 +239,8 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
                     value.member_fullname = "Ancien membre";
                 }
             });
-            $timeout(function () {
-                var objDiv = document.getElementById("wrap");
-                objDiv.scrollTop = objDiv.scrollHeight;
-
-            }, 1)
-            if (!sameList(list,list_post)){
-                $scope.posts = list_post;
-                list = list_post;
-            }
+            $scope.posts = list_post;
+            list = list_post;
         }, function (error) {
 
         });
