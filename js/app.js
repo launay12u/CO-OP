@@ -198,16 +198,17 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
           }
           return true
       }else {
-          console.log(ary1.length)
-          console.log(ary2.length)
           return false;
       }
     };
 
     $scope.edit = false;
-
-    $interval(function (i) {
-        $scope.reload();
+    $scope.edit_msg = false;
+    $scope.cancel_reload = false;
+    $interval(function () {
+        if (!$scope.cancel_reload){
+            $scope.reload();
+        }
     }, 2000);
 
     $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
@@ -301,9 +302,9 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
             });
         }
     };
-    $scope.edit_msg = false;
     $scope.editMessage = function (p) {
         if (p.member_id == localStorage.getItem("id")) {
+            $scope.cancel_reload = true;
             this.edit_msg = true;
             this.new = this.msg;
         }
@@ -311,7 +312,6 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 
     $scope.validMessage = function (p) {
         var self = this;
-
         Channel.setPost({id: $routeParams.id, id_post: p._id}, {message: this.new}, function (success) {
             self.edit_msg = false;
             $scope.reload();
@@ -319,6 +319,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
         }, function (error) {
             console.log(error);
         });
+        $scope.cancel_reload = false;
     };
 
     $scope.supprimerMessage = function (p) {
