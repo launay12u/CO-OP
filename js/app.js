@@ -37,7 +37,7 @@ app.config(['$routeProvider',
 ]);
 
 //Verification de connexion
-app.run(['$rootScope', '$location', 'Member', 'TokenService','$interval', function ($rootScope, $location, Member, TokenService,$intrval) {
+app.run(['$rootScope', '$location', 'Member', 'TokenService', '$interval', function ($rootScope, $location, Member, TokenService, $intrval) {
     $rootScope.disconnect = function () {
         TokenService.setToken(null);
         localStorage.clear();
@@ -45,9 +45,9 @@ app.run(['$rootScope', '$location', 'Member', 'TokenService','$interval', functi
 
     };
     TokenService.setToken(localStorage.getItem('token'));
-    Member.testCo({id :localStorage.getItem('id')},function (m) {
+    Member.testCo({id: localStorage.getItem('id')}, function (m) {
         $rootScope.fullname = m.fullname
-    },function (error) {
+    }, function (error) {
         localStorage.clear();
         TokenService.setToken('');
     });
@@ -111,11 +111,11 @@ app.factory('Channel', ['$resource', 'api', function ($resource, api) {
     return $resource(api.url + "/channels/:id", {id: '@_id'},
         {
             suppr: {method: 'DELETE', url: api.url + '/channels/:id'},
-            editChannel : {method: 'PUT', url: api.url+'/channels/:id'},
-            getPost : {method : 'GET', url: api.url + '/channels/:id/posts', isArray: true},
-            addPost : {method : 'POST', url: api.url + '/channels/:id/posts'},
-            setPost :{method : 'PUT', url: api.url + '/channels/:id/posts/:id_post'},
-            delPost : {method : 'DELETE', url: api.url + '/channels/:id/posts/:id_post'}
+            editChannel: {method: 'PUT', url: api.url + '/channels/:id'},
+            getPost: {method: 'GET', url: api.url + '/channels/:id/posts', isArray: true},
+            addPost: {method: 'POST', url: api.url + '/channels/:id/posts'},
+            setPost: {method: 'PUT', url: api.url + '/channels/:id/posts/:id_post'},
+            delPost: {method: 'DELETE', url: api.url + '/channels/:id/posts/:id_post'}
         });
 }]);
 //Services
@@ -129,24 +129,24 @@ app.service('TokenService', [function () {
     }
 }]);
 
-app.service('DateService',function () {
-   this.getDate = function (d) {
+app.service('DateService', function () {
+    this.getDate = function (d) {
         var array = d.split('T');
         var date = array[0];
         var time = array[1];
         var date_refactor = date.split('-').reverse().join('-');
         var array_time = time.split(':');
-        var time_refactor = array_time[0]+":"+array_time[1];
-        return "Le "+date_refactor+" à "+time_refactor;
-   }
+        var time_refactor = array_time[0] + ":" + array_time[1];
+        return "Le " + date_refactor + " à " + time_refactor;
+    }
 });
 
 // Controllers
-app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', '$interval',function ($rootScope, $scope, Member, Channel, $interval) {
+app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', '$interval', function ($rootScope, $scope, Member, Channel, $interval) {
 
     $scope.members = Member.query(function (membres) {
         for (var i = 0; i < $scope.members.length; i++) {
-            angular.forEach(membres, function(value, key) {
+            angular.forEach(membres, function (value, key) {
                 value.me = value._id == localStorage.getItem('id');
             });
 
@@ -187,101 +187,130 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
         })
     };
 }]);
-app.controller('channelController', ['$scope','Member', 'Channel', '$routeParams','DateService', '$interval','$location','$timeout',function ($scope,Member, Channel, $routeParams, DateService, $interval,$location,$timeout) {
-  /**
-  $interval(function (i) {
-    console.log("ok");
-    $scope.reload();
-  }, 1000);
-  */
+app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParams', 'DateService', '$interval', '$location', '$timeout', function ($scope, Member, Channel, $routeParams, DateService, $interval, $location, $timeout) {
+
+    $interval(function (i) {
+        $scope.reload();
+    }, 1000);
 
     $scope.channel = Channel.get({id: $routeParams.id}, function (success) {
-      $scope.topic = success.topic;
-      $scope.label = success.label;
+        $scope.topic = success.topic;
+        $scope.label = success.label;
 
     }, function (error) {
     });
 
     $scope.members = Member.query();
+    var list_post = Channel.getPost({id: $routeParams.id}, function (posts) {
+        angular.forEach(posts, function (value, key) {
+            value.me = value.member_id == localStorage.getItem("id");
+            value.time = DateService.getDate(value.created_at);
+            value.update = DateService.getDate(value.updated_at);
+            value.has_update = value.time < value.update;
+            var find = false;
+            angular.forEach($scope.members, function (val, k) {
+                if (val._id == value.member_id) {
+                    value.member_fullname = val.fullname;
+                    find = true
+                }
+            });
+            if (!find) {
+                value.member_fullname = "Ancien membre";
+            }
+        });
+        $timeout(function () {
+            var objDiv = document.getElementById("wrap");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        }, 1)
+        $scope.posts = list_post;
+    }, function (error) {
 
-    $scope.reload = function(){
-      $scope.posts = Channel.getPost({id:$routeParams.id},function (posts) {
-          angular.forEach(posts, function(value, key) {
-              value.me = value.member_id == localStorage.getItem("id");
-              value.time = DateService.getDate(value.created_at);
-              value.update = DateService.getDate(value.updated_at);
-              value.has_update = value.time < value.update;
-              var find = false;
-              angular.forEach($scope.members, function (val,k) {
-                  if (val._id == value.member_id){
-                      value.member_fullname = val.fullname;
-                      find = true
-                  }
-              });
-              if (!find){
-                  value.member_fullname = "Ancien membre";
-              }
-          });
-          $timeout(function () {
-              var objDiv = document.getElementById("wrap");
-              objDiv.scrollTop = objDiv.scrollHeight;
-          },1)
-      },function (error) {
+    });
 
-      });
-
+    arraysAreEqual = function (ary1, ary2) {
+        return (ary1.join('') == ary2.join(''));
     };
 
-    $scope.edit=false;
-    $scope.updateChannel = function (id) {
-        if($scope.edit != true){
-            $scope.edit=true;
-        }else{
-            Channel.editChannel({id:$routeParams.id},{label:$scope.label,topic:$scope.topic});
-            $scope.edit=false;
+    $scope.reload = function () {
+        var new_list_post = Channel.getPost({id: $routeParams.id}, function (posts) {
+            angular.forEach(posts, function (value, key) {
+                value.me = value.member_id == localStorage.getItem("id");
+                value.time = DateService.getDate(value.created_at);
+                value.update = DateService.getDate(value.updated_at);
+                value.has_update = value.time < value.update;
+                var find = false;
+                angular.forEach($scope.members, function (val, k) {
+                    if (val._id == value.member_id) {
+                        value.member_fullname = val.fullname;
+                        find = true
+                    }
+                });
+                if (!find) {
+                    value.member_fullname = "Ancien membre";
+                }
+            });
+            if (!arraysAreEqual(list_post, new_list_post)) {
+                $scope.posts = new_list_post;
+            }
+            $timeout(function () {
+                var objDiv = document.getElementById("wrap");
+                objDiv.scrollTop = objDiv.scrollHeight;
+
+            }, 1)
+        }, function (error) {
+
+        });
+    };
+
+    $scope.edit = false;
+    $scope.updateChannel = function () {
+        if ($scope.edit != true) {
+            $scope.edit = true;
+        } else {
+            Channel.editChannel({id: $routeParams.id}, {label: $scope.label, topic: $scope.topic});
+            $scope.edit = false;
         }
     };
 
-    $scope.reload();
 
     $scope.addMessage = function () {
-        if($scope.message != ""){
-            Channel.addPost({id:$routeParams.id},{message:$scope.message},function (success) {
-                $scope.message ="";
+        if ($scope.message != "") {
+            Channel.addPost({id: $routeParams.id}, {message: $scope.message}, function (success) {
+                $scope.message = "";
                 $scope.reload();
-            },function (error) {
+            }, function (error) {
                 console.log(error)
             });
         }
     };
     $scope.edit_msg = false;
-    $scope.editMessage = function (p){
-      if (p.member_id == localStorage.getItem("id")){
-          this.edit_msg = true;
-          this.new = this.msg;
-      }
+    $scope.editMessage = function (p) {
+        if (p.member_id == localStorage.getItem("id")) {
+            this.edit_msg = true;
+            this.new = this.msg;
+        }
     };
 
-    $scope.validMessage = function (p){
-      var self = this;
+    $scope.validMessage = function (p) {
+        var self = this;
 
-      Channel.setPost({id:$routeParams.id, id_post:p._id},{message:this.new}, function(success){
-        self.edit_msg = false;
-        $scope.reload();
+        Channel.setPost({id: $routeParams.id, id_post: p._id}, {message: this.new}, function (success) {
+            self.edit_msg = false;
+            $scope.reload();
 
-      }, function(error){
-        console.log(error);
-      });
-    };
-
-    $scope.supprimerMessage = function(p){
-      if (p.member_id == localStorage.getItem("id")){
-        Channel.delPost({id:$routeParams.id, id_post:p._id}, function(success){
-          $scope.reload();
-        }, function(error){
-          console.log(error);
+        }, function (error) {
+            console.log(error);
         });
-      }
+    };
+
+    $scope.supprimerMessage = function (p) {
+        if (p.member_id == localStorage.getItem("id")) {
+            Channel.delPost({id: $routeParams.id, id_post: p._id}, function (success) {
+                $scope.reload();
+            }, function (error) {
+                console.log(error);
+            });
+        }
     };
 
 }]);

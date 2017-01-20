@@ -27,16 +27,16 @@
     </div>
     <div class="container">
         <div class="page-header">
-            <h1 ng-model="label" ng-show="! edit">{{label}}<br>
+            <h1 ng-model="label" ng-show="! edit">{{label}}<br/>
                 <small ng-model="topic" ng-show="! edit">{{topic}}</small>
             </h1>
             <button ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show="! edit"> modifier
             </button>
-            <input type="text" ng-model="label" ng-show="edit" ng-hide="true" value="{{label}}">
-            <input type="text" ng-model="topic" ng-show="edit" ng-hide="true" value="{{topic}}">
+            <input type="text" ng-model="label" ng-show="edit" ng-hide="true" value="{{label}}"/>
+            <input type="text" ng-model="topic" ng-show="edit" ng-hide="true" value="{{topic}}"/>
             <a ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show=" edit"> valider</a>
         </div>
-        <hr>
+        <hr/>
         <div class="col-lg-10 col-lg-offset-1">
         <div class="msg-wrap" id="wrap">
             <div ng-repeat=" post in posts | orderBy:'created_at'">
@@ -54,8 +54,7 @@
                         </small>
                         <small ng-show="edit_msg">
                             <form>
-                                <input type="text" ng-model="new" placeholder="{{post.message}}"
-                                       value="{{post.message}}"/>
+                                <input type="text" ng-model="new"   />
                                 <button ng-click="validMessage(post)">Valider</button>
                             </form>
                         </small>
@@ -65,9 +64,9 @@
         </div>
         <div class="send-wrap ">
             <form>
-        <textarea class="form-control send-message" placeholder="Ecrire votre message" rows="2"
-                  ng-model="message"></textarea>
-                <button type="button" class="btn btn-primary button-send" ng-click="addMessage()">Envoyer</button>
+        <input class="form-control send-message" placeholder="Ecrire votre message"
+                  ng-model="message" />
+                <button class="btn btn-primary button-send" ng-click="addMessage()">Envoyer</button>
             </form>
         </div>
     </div>
