@@ -38,38 +38,45 @@
         </div>
         <hr/>
         <div class="col-lg-10 col-lg-offset-1">
-        <div class="msg-wrap" id="wrap">
-            <div ng-repeat=" post in posts | orderBy:'created_at'">
-                <div class="media msg msg_{{post.me}}">
-                    <div class="media-body">
-                        <div class="pull-right">
-                            <small class=" time">{{post.time}}</small>
-                            <i class="fa fa-trash delete_post" aria-hidden="true" ng-click="supprimerMessage(post)"
-                               ng-show="{{post.me}}"></i>
+            <div class="msg-wrap" id="wrap">
+                <div ng-repeat=" post in posts | orderBy:'created_at'">
+                    <div class="media msg msg_{{post.me}}">
+                        <div class="media-body">
+                            <div class="pull-right">
+                                <small class=" time">{{post.time}}</small>
+                                <i class="fa fa-trash delete_post" aria-hidden="true" ng-click="supprimerMessage(post)"
+                                   ng-show="{{post.me}}"></i>
+                            </div>
+                            <h5 class="media-heading">{{post.member_fullname}}</h5>
+                            <small class="col-lg-10" ng-model="msg" ng-show="!edit_msg">
+                                {{post.message}} <i style="margin-left: 1%" ng-click="editMessage(post)"
+                                                    ng-show="{{post.me}}" class="fa fa-pencil" aria-hidden="true"></i>
+                                <span class="time" ng-show="{{post.has_update}}">(Modifier {{post.update}})</span>
+                            </small>
+                            <small ng-show="edit_msg">
+                                <form>
+                                    <div class="input-group modif_message">
+                                        <input type="text" class="form-control input-sm" ng-model="new" placeholder="{{post.message}}" />
+                                        <span class="input-group-btn">
+                        <button class="btn btn-info btn-sm" type="button" ng-click="validMessage(post)">
+                            <i class="fa fa-check"></i>
+                        </button>
+                    </span>
+                                    </div>
+                                </form>
+                            </small>
                         </div>
-                        <h5 class="media-heading">{{post.member_fullname}}</h5>
-                        <small class="col-lg-10" ng-model="msg" ng-show="!edit_msg">
-                            {{post.message}} <i style="margin-left: 1%" ng-click="editMessage(post)" ng-show="{{post.me}}" class="fa fa-pencil" aria-hidden="true"></i>
-                            <span class="time" ng-show="{{post.has_update}}">(Modifier {{post.update}})</span>
-                        </small>
-                        <small ng-show="edit_msg">
-                            <form>
-                                <input type="text" ng-model="new"  placeholder="{{post.message}}" />
-                                <button ng-click="validMessage(post)">Valider</button>
-                            </form>
-                        </small>
                     </div>
                 </div>
             </div>
+            <div class="send-wrap ">
+                <form>
+                    <input class="form-control send-message" placeholder="Ecrire votre message"
+                           ng-model="message"/>
+                    <button class="btn btn-primary button-send" ng-click="addMessage()">Envoyer</button>
+                </form>
+            </div>
         </div>
-        <div class="send-wrap ">
-            <form>
-        <input class="form-control send-message" placeholder="Ecrire votre message"
-                  ng-model="message" />
-                <button class="btn btn-primary button-send" ng-click="addMessage()">Envoyer</button>
-            </form>
-        </div>
-    </div>
     </div>
 </div>
 

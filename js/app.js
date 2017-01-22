@@ -142,8 +142,10 @@ app.service('DateService', function () {
 });
 
 // Controllers
-app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', '$interval', function ($rootScope, $scope, Member, Channel, $interval) {
-
+app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel', function ($rootScope, $scope, Member, Channel ) {
+    Member.testCo({id:localStorage.getItem('id')},function (m) {
+        $rootScope.fullname = m.fullname;
+    });
     $scope.members = Member.query(function (membres) {
         for (var i = 0; i < $scope.members.length; i++) {
             angular.forEach(membres, function (value, key) {
@@ -159,11 +161,17 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
     $scope.suppr_m = function (m) {
         Member.suppr({id: m._id}, function () {
             $scope.members = Member.query(function (membres) {
+                for (var i = 0; i < $scope.members.length; i++) {
+                    angular.forEach(membres, function (value, key) {
+                        value.me = value._id == localStorage.getItem('id');
+                    });
 
+                }
             }, function (error) {
                 //error
                 console.log(error)
             });
+
         }, function (error) {
             console.log(error)
         })
@@ -188,19 +196,6 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
     };
 }]);
 app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParams', 'DateService', '$interval', '$location', '$timeout', function ($scope, Member, Channel, $routeParams, DateService, $interval, $location, $timeout) {
-
-    sameList = function (ary1, ary2) {
-      if (ary1.length == ary2.length){
-          for (var i = 0; i< ary1.length; i++){
-              if (ary1[i].message != ary2[i]){
-                  return false;
-              }
-          }
-          return true
-      }else {
-          return false;
-      }
-    };
 
     $scope.edit = false;
     $scope.edit_msg = false;
@@ -240,6 +235,13 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
                 }
             });
             $scope.posts = list_post;
+            if (list_post.length > list.length){
+                $timeout(function () {
+                    var objDiv = document.getElementById("wrap");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+
+                }, 10);
+            }
             list = list_post;
         }, function (error) {
 
@@ -248,7 +250,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 
 
     var list;
-    $scope.posts = $scope.posts = Channel.getPost({id: $routeParams.id}, function (posts) {
+    $scope.posts = Channel.getPost({id: $routeParams.id}, function (posts) {
         angular.forEach(posts, function (value, key) {
             value.me = value.member_id == localStorage.getItem("id");
             value.time = DateService.getDate(value.created_at);
@@ -269,11 +271,11 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
             var objDiv = document.getElementById("wrap");
             objDiv.scrollTop = objDiv.scrollHeight;
 
-        }, 1)
+        }, 1);
         list = $scope.posts
     }, function (error) {
 
-    });;
+    });
 
     $scope.updateChannel = function () {
         if ($scope.edit != true) {
@@ -299,7 +301,6 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
         if (p.member_id == localStorage.getItem("id")) {
             $scope.cancel_reload = true;
             this.edit_msg = true;
-            this.new = this.msg;
         }
     };
 
@@ -378,4 +379,5 @@ app.controller("startController", ['$scope', 'Member', 'TokenService', '$locatio
     };
 
 }]);
-//TODO check token before
+
+//TODO Ajouter logo erreur + erreur non co
