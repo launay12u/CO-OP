@@ -16,6 +16,6 @@ AngularJS chat team like SLACK, using REST API. Desktop app make with electron.
 
 #Contributor
 
-LAUNAY Guillaume https://github.com/launay12u
-PIERRE Alexandre https://github.com/pierre121u
+LAUNAY Guillaume https://github.com/launay12u  
+PIERRE Alexandre https://github.com/pierre121u  
 POSTEL Romain    https://github.com/postel5u
