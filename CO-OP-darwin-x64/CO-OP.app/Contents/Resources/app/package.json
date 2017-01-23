@@ -1,0 +1,11 @@
+{
+  "name" : "CO-OP",
+  "version" : "1.4.15",
+  "description" : "projet angular",
+  "main" : "index.js",
+  "scripts": {
+    "start": "electron index.js"
+  },
+  "license":"ISC"
+
+}

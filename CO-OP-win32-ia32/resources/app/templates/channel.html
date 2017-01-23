@@ -1,0 +1,83 @@
+<div>
+    <div class=" nav-with-logo">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar5">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#!/home"><img style="width: 64px;" src="img/logo.png" alt="CO'OP"/>CO'OP
+                    </a>
+                </div>
+                <div id="navbar5" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#!/homeCo">{{fullname}}</a></li>
+                        <li><a href="#!/newChannel">Créer un channel</a></li>
+                        <li><a href="#" ng-click="disconnect()">Deconnexion</a></li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+            <!--/.container-fluid -->
+        </nav>
+
+    </div>
+    <div class="container">
+        <div class="page-header">
+            <h1 ng-model="label" ng-show="! edit">{{label}}<br/>
+                <small ng-model="topic" ng-show="! edit">{{topic}}</small>
+            </h1>
+            <button ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show="! edit"> modifier
+            </button>
+            <input type="text" ng-model="label" ng-show="edit" ng-hide="true" value="{{label}}"/>
+            <input type="text" ng-model="topic" ng-show="edit" ng-hide="true" value="{{topic}}"/>
+            <a ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show=" edit"> valider</a>
+        </div>
+        <div ng-bind-html="erreur_div" class="col-lg-4 col-lg-offset-4"></div>
+        <div class="col-lg-10 col-lg-offset-1">
+            <hr/>
+            <div class="msg-wrap" id="wrap">
+                <div ng-repeat=" post in posts | orderBy:'created_at'">
+                    <div class="media msg msg_{{post.me}}">
+                        <div class="media-body">
+                            <div class="pull-right">
+                                <small class=" time">{{post.time}}</small>
+                                <i class="fa fa-trash delete_post" aria-hidden="true" ng-click="supprimerMessage(post)"
+                                   ng-show="{{post.me}}"></i>
+                            </div>
+                            <h5 class="media-heading">{{post.member_fullname}}</h5>
+                            <small class="col-lg-10" ng-model="msg" ng-show="!edit_msg">
+                                {{post.message}} <i style="margin-left: 1%" ng-click="editMessage(post)"
+                                                    ng-show="{{post.me}}" class="fa fa-pencil" aria-hidden="true"></i>
+                                <span class="time" ng-show="{{post.has_update}}">(Modifier {{post.update}})</span>
+                            </small>
+                            <small ng-show="edit_msg">
+                                <form>
+                                    <div class="input-group modif_message">
+                                        <input type="text" class="form-control input-sm" ng-model="new" placeholder="{{post.message}}" />
+                                        <span class="input-group-btn">
+                        <button class="btn btn-info btn-sm" type="button" ng-click="validMessage(post)">
+                            <i class="fa fa-check"></i>
+                        </button>
+                    </span>
+                                    </div>
+                                </form>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="send-wrap ">
+                <form>
+                    <input class="form-control send-message" placeholder="Ecrire votre message"
+                           ng-model="message"/>
+                    <button class="btn btn-primary button-send" ng-click="addMessage()">Envoyer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

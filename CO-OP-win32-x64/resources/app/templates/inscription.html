@@ -1,0 +1,57 @@
+<div>
+    <div class=" nav-with-logo">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar5">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#!/home"><img style="width: 64px;" src="img/logo.png" alt="CO'OP"/>CO'OP
+                    </a>
+                </div>
+                <div id="navbar5" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#!/home">Accueil</a></li>
+                        <li><a href="#!/login">Connexion</a></li>
+                        <li class="active"><a href="#!/signup">Inscription</a></li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+            <!--/.container-fluid -->
+        </nav>
+
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="main">
+                <h3>Inscription, ou <a href="#!/login">Connexion</a></h3>
+                <hr class="hr-or"/>
+                <div ng-bind-html="erreur_div"></div>
+                <form role="form">
+                    <div class="form-group">
+                        <label for="inputName">Nom Complet</label>
+                        <input ng-model="fullname" type="text" class="form-control" id="inputName"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail">Email</label>
+                        <input ng-model="email" type="text" class="form-control" id="inputEmail"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword">Mot de passe</label>
+                        <input ng-model="password" type="password" class="form-control" id="inputPassword"/>
+                    </div>
+                    <button type="submit" ng-click="signup()" class="btn btn btn-primary">
+                        S'Inscrire
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
