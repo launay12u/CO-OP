@@ -111,11 +111,14 @@ app.factory('Channel', ['$resource', 'api', function ($resource, api) {
     return $resource(api.url + "/channels/:id", {id: '@_id'},
         {
             suppr: {method: 'DELETE', url: api.url + '/channels/:id'},
-            editChannel: {method: 'PUT', url: api.url + '/channels/:id'},
-            getPost: {method: 'GET', url: api.url + '/channels/:id/posts', isArray: true},
-            addPost: {method: 'POST', url: api.url + '/channels/:id/posts'},
-            setPost: {method: 'PUT', url: api.url + '/channels/:id/posts/:id_post'},
-            delPost: {method: 'DELETE', url: api.url + '/channels/:id/posts/:id_post'}
+            editChannel: {method: 'PUT', url: api.url + '/channels/:id'}
+        });
+}]);
+
+app.factory('Post',['$resource','api', function ($resource, api) {
+    return $resource(api.url + "/channels/:id_channel/posts/:id",{id:'@_id'},
+        {
+            update : {method:'PUT'}
         });
 }]);
 //Services
@@ -195,7 +198,7 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
         })
     };
 }]);
-app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParams', 'DateService', '$interval', '$location', '$timeout', function ($scope, Member, Channel, $routeParams, DateService, $interval, $location, $timeout) {
+app.controller('channelController', ['$scope','Post','Member', 'Channel', '$routeParams', 'DateService', '$interval', '$location', '$timeout', function ($scope ,Post ,Member, Channel, $routeParams, DateService, $interval, $location, $timeout) {
 
     $scope.edit = false;
     $scope.edit_msg = false;
@@ -217,7 +220,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 
 
     $scope.reload = function () {
-        var list_post = Channel.getPost({id: $routeParams.id}, function (posts) {
+        var list_post = Post.query({id_channel: $routeParams.id}, function (posts) {
             angular.forEach(posts, function (value, key) {
                 value.me = value.member_id == localStorage.getItem("id");
                 value.time = DateService.getDate(value.created_at);
@@ -252,7 +255,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 
 
     var list;
-    $scope.posts = Channel.getPost({id: $routeParams.id}, function (posts) {
+    $scope.posts = Post.query({id_channel: $routeParams.id}, function (posts) {
         angular.forEach(posts, function (value, key) {
             value.me = value.member_id == localStorage.getItem("id");
             value.time = DateService.getDate(value.created_at);
@@ -274,8 +277,9 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
             objDiv.scrollTop = objDiv.scrollHeight;
 
         }, 1);
-        list = $scope.posts
+        list = $scope.posts;
     }, function (error) {
+        console.log(error)
         $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
     });
 
@@ -291,7 +295,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 
     $scope.addMessage = function () {
         if ($scope.message != "") {
-            Channel.addPost({id: $routeParams.id}, {message: $scope.message}, function (success) {
+            Post.save({id_channel: $routeParams.id}, {message: $scope.message}, function (success) {
                 $scope.message = "";
                 $scope.reload();
             }, function (error) {
@@ -308,11 +312,12 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 
     $scope.validMessage = function (p) {
         var self = this;
-        Channel.setPost({id: $routeParams.id, id_post: p._id}, {message: this.new}, function (success) {
+        Post.update({id_channel: $routeParams.id,id:p._id}, {message: this.new}, function (success) {
             self.edit_msg = false;
             $scope.reload();
 
         }, function (error) {
+            console.log(error)
             $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
         });
         $scope.cancel_reload = false;
@@ -320,7 +325,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 
     $scope.supprimerMessage = function (p) {
         if (p.member_id == localStorage.getItem("id")) {
-            Channel.delPost({id: $routeParams.id, id_post: p._id}, function (success) {
+            Post.delete({id_channel: $routeParams.id, id:p._id}, function (success) {
                 $scope.reload();
             }, function (error) {
                 $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
@@ -331,6 +336,9 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
 }]);
 
 app.controller("signupController", ['$scope', 'Member', '$location', function ($scope, Member, $location) {
+    $scope.fullname = "";
+    $scope.email ="";
+    $scope.password ="";
     $scope.signup = function () {
         $scope.newMember = new Member({
             fullname: $scope.fullname,
@@ -375,11 +383,11 @@ app.controller("startController", ['$scope', 'Member', 'TokenService', '$locatio
             localStorage.setItem('token', $scope.member.token);
             localStorage.setItem('id', $scope.member._id);
             $location.path("/homeCo");
+            $scope.email = "";
+            $scope.password = "";
         }, function (error) {
             $scope.erreur_div = "<div class='alert alert-danger' role='alert'><i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
         });
     };
 
 }]);
-
-//TODO Ajouter logo erreur + erreur non co
