@@ -36,8 +36,9 @@
             <input type="text" ng-model="topic" ng-show="edit" ng-hide="true" value="{{topic}}"/>
             <a ng-click="updateChannel(channel._id)" class="btn btn-primary right" ng-show=" edit"> valider</a>
         </div>
-        <hr/>
+        <div ng-bind-html="erreur_div" class="col-lg-4 col-lg-offset-4"></div>
         <div class="col-lg-10 col-lg-offset-1">
+            <hr/>
             <div class="msg-wrap" id="wrap">
                 <div ng-repeat=" post in posts | orderBy:'created_at'">
                     <div class="media msg msg_{{post.me}}">

@@ -339,7 +339,7 @@ body {
 .time{
     color: gray;
 }
-i{
+#wrap i{
     cursor: pointer;
 
 }

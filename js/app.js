@@ -169,17 +169,17 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
                 }
             }, function (error) {
                 //error
-                console.log(error)
+                $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
             });
 
         }, function (error) {
-            console.log(error)
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
         })
     };
 
     $scope.channels = Channel.query(function (channels) {
     }, function (error) {
-        console.log(error);
+        $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
     });
 
     $scope.suppr_c = function (m) {
@@ -188,10 +188,10 @@ app.controller("homeCoController", ['$rootScope', '$scope', 'Member', 'Channel',
 
             }, function (error) {
                 //error
-                console.log(error)
+                $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
             });
         }, function (error) {
-            console.log(error)
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
         })
     };
 }]);
@@ -221,8 +221,10 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
             angular.forEach(posts, function (value, key) {
                 value.me = value.member_id == localStorage.getItem("id");
                 value.time = DateService.getDate(value.created_at);
-                value.update = DateService.getDate(value.updated_at);
-                value.has_update = value.time < value.update;
+                value.has_update = value.created_at != value.updated_at;
+                if (value.has_update){
+                    value.update = DateService.getDate(value.updated_at);
+                }
                 var find = false;
                 angular.forEach($scope.members, function (val, k) {
                     if (val._id == value.member_id) {
@@ -244,7 +246,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
             }
             list = list_post;
         }, function (error) {
-
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
         });
     };
 
@@ -274,7 +276,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
         }, 1);
         list = $scope.posts
     }, function (error) {
-
+        $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
     });
 
     $scope.updateChannel = function () {
@@ -293,7 +295,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
                 $scope.message = "";
                 $scope.reload();
             }, function (error) {
-                console.log(error)
+                $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
             });
         }
     };
@@ -311,7 +313,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
             $scope.reload();
 
         }, function (error) {
-            console.log(error);
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
         });
         $scope.cancel_reload = false;
     };
@@ -321,7 +323,7 @@ app.controller('channelController', ['$scope', 'Member', 'Channel', '$routeParam
             Channel.delPost({id: $routeParams.id, id_post: p._id}, function (success) {
                 $scope.reload();
             }, function (error) {
-                console.log(error);
+                $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
             });
         }
     };
@@ -339,7 +341,7 @@ app.controller("signupController", ['$scope', 'Member', '$location', function ($
         $scope.newMember.$save(function (m) {
             $location.path("/login");
         }, function (error) {
-            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : " + error.data.error + "</div>"
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
             /*  */
         });
     }
@@ -358,7 +360,7 @@ app.controller("newChannelController", ['$scope', 'Channel', '$location', functi
         $scope.channel.$save(function () {
             $location.path('/homeCo');
         }, function (error) {
-            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : " + error.data.error + "</div>"
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'> <i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
         })
     }
 }]);
@@ -374,7 +376,7 @@ app.controller("startController", ['$scope', 'Member', 'TokenService', '$locatio
             localStorage.setItem('id', $scope.member._id);
             $location.path("/homeCo");
         }, function (error) {
-            $scope.erreur_div = "<div class='alert alert-danger' role='alert'>Erreur : " + error.data.error + "</div>"
+            $scope.erreur_div = "<div class='alert alert-danger' role='alert'><i class='fa fa-exclamation-circle' aria-hidden='true'></i> Erreur : " + error.data.error + "</div>"
         });
     };
 
