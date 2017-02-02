@@ -1,5 +1,6 @@
 const electron = require('electron')
 const app = electron.app
+const {Menu} = require('electron')
 const BrowserWindow = electron.BrowserWindow
 
 let mainWindow
@@ -26,6 +27,41 @@ function createWindow () {
   mainWindow = new BrowserWindow({width: 1024, height: 768})
   mainWindow.setResizable(false)
   mainWindow.loadURL(`file://${__dirname}/index.html`)
+
+  const template = [
+  {
+    label: 'Menu',
+    submenu: [
+      {
+        label: 'Recharger',
+        accelerator: 'CmdOrCtrl+R',
+        click (item, focusedWindow) {
+          if (focusedWindow) focusedWindow.reload()
+        }
+      },
+      {
+        label: 'Console développeur',
+        accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+        click (item, focusedWindow) {
+          if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+        }
+      }
+    ]
+  },
+  {
+    label : "Plus d'info ?",
+    role: 'help',
+    submenu: [
+      {
+        label: 'Notre dépot Github',
+        click () { require('electron').shell.openExternal('https://github.com/launay12u/CO-OP') }
+      }
+    ]
+  }
+]
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
 
   //mainWindow.webContents.openDevTools()
 
